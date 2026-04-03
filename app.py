@@ -88,7 +88,7 @@ st.markdown("""
     font-family: 'DM Sans', system-ui, sans-serif !important;
 }
 [data-testid="stHeader"] { background: transparent !important; z-index: 10; }
-[data-testid="block-container"] { padding-top: 0 !important; position: relative; z-index: 2; }
+[data-testid="block-container"] { padding-top: 0 !important; position: relative; z-index: 2; max-width: 960px !important; margin: 0 auto !important; padding-left: 2rem !important; padding-right: 2rem !important; }
 
 /* ── Background layer ── */
 .stadium-bg {
@@ -104,8 +104,8 @@ st.markdown("""
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(180deg,
-        rgba(4,8,26,0.48) 0%,
-        rgba(4,8,26,0.65) 42%,
+        rgba(4,8,26,0.30) 0%,
+        rgba(4,8,26,0.50) 42%,
         rgba(4,8,26,0.93) 78%,
         rgba(4,8,26,0.99) 100%);
     z-index: 1;
@@ -116,7 +116,7 @@ st.markdown("""
 body, p, span, div, label, td, th { color: #C8D4F0 !important; }
 
 /* ── Streamlit tabs — pill style ── */
-[data-testid="stTabs"] {
+[data-testid="stTabs"] [role="tablist"] {
     background: rgba(6,11,35,0.60) !important;
     backdrop-filter: blur(16px) !important;
     border: 1px solid rgba(255,255,255,0.07) !important;
@@ -141,7 +141,7 @@ body, p, span, div, label, td, th { color: #C8D4F0 !important; }
     background: linear-gradient(135deg, rgba(255,213,79,0.13), rgba(255,213,79,0.06)) !important;
     box-shadow: inset 0 1px 0 rgba(255,213,79,0.22), 0 1px 8px rgba(0,0,0,0.3) !important;
 }
-[data-testid="stTabs"] [role="tablist"] { border-bottom: none !important; gap: 2px !important; }
+[data-testid="stTabs"] button::after { display: none !important; }
 
 /* ── Selectbox ── */
 [data-testid="stSelectbox"] > div > div {
@@ -406,6 +406,15 @@ if SLIDESHOW_IMAGES:
   var current = 0, showingA = true;
   slideA.style.backgroundImage = 'url(' + images[0] + ')';
   slideA.style.opacity = '1';
+  function updateDots(idx) {{
+    var doc = window.frameElement ? window.frameElement.ownerDocument : document;
+    for (var i = 0; i < images.length; i++) {{
+      var d = doc.getElementById('dot-' + i);
+      if (!d) continue;
+      d.style.background = (i===idx) ? '#FFD54F' : 'rgba(255,255,255,0.2)';
+      d.style.transform  = (i===idx) ? 'scale(1.5)' : 'scale(1)';
+    }}
+  }}
   setInterval(function() {{
     var next = (current + 1) % images.length;
     var inc = showingA ? slideB : slideA;
@@ -415,6 +424,7 @@ if SLIDESHOW_IMAGES:
     out.style.opacity = '0';
     showingA = !showingA;
     current = next;
+    updateDots(next);
   }}, INTERVAL);
 }})();
 </script>"""
@@ -589,6 +599,11 @@ st.markdown(f"""
   <div class="subtitle">{n} match{"es" if n!=1 else ""} played &nbsp;·&nbsp; Season standings</div>
 </div>
 """, unsafe_allow_html=True)
+
+# Slide dots
+if SLIDESHOW_IMAGES:
+    dots = ''.join(f'<div id="dot-{i}" style="width:7px;height:7px;border-radius:50%;background:{"#FFD54F" if i==0 else "rgba(255,255,255,0.2)"};border:1px solid rgba(255,255,255,0.2);display:inline-block;margin:0 3px;transition:all 0.3s;"></div>' for i in range(len(SLIDESHOW_IMAGES)))
+    st.markdown(f'<div style="text-align:center;margin:6px 0 20px">{dots}</div>', unsafe_allow_html=True)
 
 medals      = ['🥇', '🥈', '🥉']
 place_label = ['1st place', '2nd place', '3rd place']
