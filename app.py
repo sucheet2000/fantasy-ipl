@@ -643,7 +643,7 @@ for i, row in lb.iterrows():
     av_bdr  = hex_to_rgba(col, 0.45)
     bar_pct = round((row['Total'] / max_pts) * 100) if max_pts > 0 else 0
     lb_html += f"""
-    <div class="lb-row" style="--accent:{col}">
+    <div class="lb-row" style="--accent:{col};background:linear-gradient(135deg,rgba(6,11,42,0.97),rgba(4,8,30,0.98)) !important;">
       <span class="lb-rank">{i+1}</span>
       <div class="lb-av" style="background:{av_bg};color:{col};border-color:{av_bdr}">{initials(row['Manager'])}</div>
       <span class="lb-name">{row['Manager']}</span>
@@ -685,7 +685,7 @@ for mk_idx, mk in enumerate(active_matches):
         </div>'''
     
     active = ' active' if mk == (active_matches[-1] if active_matches else '') else ''
-    match_tabs_html += f'''<div class="match-tab{active}" id="match-{mk}" data-match="{mk}">
+    match_tabs_html += f'''<div class="match-tab{active}" id="match-{mk}" data-match="{mk}" style="background:rgba(4,8,28,0.94);border-radius:14px;padding:12px;">
       <div class="mgr-grid">{top3_match}</div>
       <div class="sec-row"><span class="sec-label">All managers</span><div class="sec-line"></div></div>
       {all_rows}
@@ -724,8 +724,8 @@ for oi, owner in enumerate(owners_ordered):
             vs = f'{v:.1f}' if v != 0 else '—'
             match_cols += f'<td style="text-align:right" class="{mc}">{vs}</td>'
         
-        rows += f'''<tr>
-          <td>{prow["PlayerName"]}</td>
+        rows += f'''<tr style="background:rgba(4,8,28,0.96)">
+          <td style="color:#FFFFFF">{prow["PlayerName"]}</td>
           <td style="text-align:center">{badge}</td>
           <td style="text-align:right" class="{pc}">{tp:.2f}</td>
           {match_cols}
@@ -734,7 +734,7 @@ for oi, owner in enumerate(owners_ordered):
     match_headers = ''.join(f'<th style="text-align:right">{MATCH_LABELS[mk].split(":")[0]}</th>' for mk in active_matches)
     
     active = ' active' if oi == 0 else ''
-    roster_tabs_html += f'''<div class="roster-tab{active}" id="roster-{owner.replace(" ","-")}">
+    roster_tabs_html += f'''<div class="roster-tab{active}" id="roster-{owner.replace(" ","-")}" style="background:rgba(4,8,28,0.96);border-radius:14px;padding:12px;">
       <div class="roster-header-card">
         <div class="roster-av" style="background:{av_bg};color:{col_hex};border-color:{av_bdr}">{initials(owner)}</div>
         <div>
@@ -788,8 +788,8 @@ html = f"""
   70% {{ transform:scale(2.2);opacity:0; }}
   100%{{ transform:scale(2.2);opacity:0; }}
 }}
-* {{ margin:0; padding:0; box-sizing:border-box; }}
-html, body {{ background:transparent !important; font-family:'DM Sans',system-ui,sans-serif; color:#FFFFFF; min-height:100vh; overflow-x:hidden; }}
+* {{ margin:0; padding:0; box-sizing:border-box; color:#FFFFFF; }}
+html, body {{ background:transparent !important; font-family:'DM Sans',system-ui,sans-serif; color:#FFFFFF !important; min-height:100vh; overflow-x:hidden; }}
 
 
 
