@@ -421,7 +421,6 @@ if SLIDESHOW_IMAGES:
     components.html(slideshow_js, height=0)
 
 else:
-else:
     bg_html = """
 <div class="stadium-bg" id="stadium-bg-container">
 <svg id="cricket-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
