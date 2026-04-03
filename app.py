@@ -44,6 +44,7 @@ MATCH_LABELS = {
     'Match4': 'M4: PBKS vs GT',
     'Match5': 'M5: DC vs LSG',
     'Match6': 'M6: SRH vs KKR',
+    'Match7': 'M7: PBKS vs CSK',
 }
 
 BAR_COLORS = [
