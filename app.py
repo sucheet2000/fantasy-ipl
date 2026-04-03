@@ -377,20 +377,31 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 """, unsafe_allow_html=True)
 
 # ── Background: slideshow or SVG stadium ─────────────────────────────
+import streamlit.components.v1 as components
+
 if SLIDESHOW_IMAGES:
-    images_js = '[' + ','.join(f'"{img}"' for img in SLIDESHOW_IMAGES) + ']'
-    bg_html = f"""
+    bg_html = """
 <div class="stadium-bg" id="stadium-bg-container">
   <div id="slide-a" style="position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity 1.6s ease;"></div>
   <div id="slide-b" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.6s ease;"></div>
 </div>
-<div class="scroll-overlay"></div>
+<div class="scroll-overlay"></div>"""
+    st.markdown(bg_html, unsafe_allow_html=True)
+
+    # Build JS — images array split into chunks to keep each string manageable
+    images_js = '[' + ','.join(f'"{img}"' for img in SLIDESHOW_IMAGES) + ']'
+    slideshow_js = f"""
 <script>
-(function(){{
+(function() {{
   var images = {images_js};
   var INTERVAL = 5000;
-  var slideA = document.getElementById('slide-a');
-  var slideB = document.getElementById('slide-b');
+  function getEl(id) {{
+    var f = window.frameElement;
+    if (!f) return document.getElementById(id);
+    return f.ownerDocument.getElementById(id);
+  }}
+  var slideA = getEl('slide-a');
+  var slideB = getEl('slide-b');
   if (!slideA || images.length === 0) return;
   var current = 0, showingA = true;
   slideA.style.backgroundImage = 'url(' + images[0] + ')';
@@ -407,6 +418,9 @@ if SLIDESHOW_IMAGES:
   }}, INTERVAL);
 }})();
 </script>"""
+    components.html(slideshow_js, height=0)
+
+else:
 else:
     bg_html = """
 <div class="stadium-bg" id="stadium-bg-container">
@@ -485,7 +499,7 @@ else:
 </div>
 <div class="scroll-overlay"></div>"""
 
-st.markdown(bg_html, unsafe_allow_html=True)
+    st.markdown(bg_html, unsafe_allow_html=True)
 
 
 # ── Data loading ──────────────────────────────────────────────────────
