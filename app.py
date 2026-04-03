@@ -23,7 +23,7 @@ st.markdown("""
     max-width: 100% !important;
 }
 section[data-testid="stMain"] > div { padding: 0 !important; }
-iframe { border: none !important; }
+iframe { border: none !important; background: transparent !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -416,6 +416,25 @@ if SLIDESHOW_IMAGES:
     current = next;
   }}, INTERVAL);
 }})();
+
+function switchMatch(mk) {{
+  document.querySelectorAll('.match-tab').forEach(function(t) {{ t.classList.remove('active'); }});
+  document.querySelectorAll('.match-btn').forEach(function(b) {{ b.classList.remove('active'); }});
+  var el = document.getElementById('match-' + mk);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.match-btn').forEach(function(b) {{
+    if (b.getAttribute('onclick').indexOf(mk) > -1) b.classList.add('active');
+  }});
+}}
+function switchRoster(owner) {{
+  document.querySelectorAll('.roster-tab').forEach(function(t) {{ t.classList.remove('active'); }});
+  document.querySelectorAll('.roster-btn').forEach(function(b) {{ b.classList.remove('active'); }});
+  var el = document.getElementById('roster-' + owner);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.roster-btn').forEach(function(b) {{
+    if (b.getAttribute('onclick').indexOf(owner) > -1) b.classList.add('active');
+  }});
+}}
 </script>"""
 else:
     bg_html = """
@@ -622,6 +641,115 @@ for i, row in lb.iterrows():
       <span class="lb-pts" style="color:{col}">{row['Total']:.2f}</span>
     </div>"""
 
+# ── Build match day HTML ─────────────────────────────────────────────
+match_tabs_html = ''
+for mk_idx, mk in enumerate(active_matches):
+    mgr_match = df.groupby('Owner')[mk].sum().sort_values(ascending=False).reset_index()
+    mgr_match.columns = ['Manager', 'Points']
+    match_label = MATCH_LABELS[mk]
+    
+    # Top 3 mini podium
+    top3_match = ''
+    match_medals = ['🥇','🥈','🥉']
+    match_place = ['1st','2nd','3rd']
+    for mi, mrow in mgr_match.head(3).iterrows():
+        top3_match += f'''<div class="mgr-card">
+          <div class="mgr-rank">{match_medals[mi]} {match_place[mi]}</div>
+          <div class="mgr-name">{mrow['Manager']}</div>
+          <div class="mgr-pts">{mrow['Points']:.1f}</div>
+        </div>'''
+    
+    # All managers this match
+    all_rows = ''
+    for _, mrow in mgr_match.iterrows():
+        midx = owners_ordered.index(mrow['Manager']) if mrow['Manager'] in owners_ordered else 0
+        col = BAR_COLORS[midx % len(BAR_COLORS)]
+        av_bg = hex_to_rgba(col, 0.18)
+        av_bdr = hex_to_rgba(col, 0.45)
+        pts_col = col if mrow['Points'] > 0 else ('#FF5252' if mrow['Points'] < 0 else '#3A4A7A')
+        ps = f"+{mrow['Points']:.2f}" if mrow['Points'] > 0 else f"{mrow['Points']:.2f}"
+        all_rows += f'''<div class="lb-row">
+          <div class="lb-av" style="background:{av_bg};color:{col};border-color:{av_bdr}">{initials(mrow['Manager'])}</div>
+          <span class="lb-name">{mrow['Manager']}</span>
+          <span style="font-family:Sora,sans-serif;font-size:13px;font-weight:700;color:{pts_col}">{ps}</span>
+        </div>'''
+    
+    active = ' active' if mk == (active_matches[-1] if active_matches else '') else ''
+    match_tabs_html += f'''<div class="match-tab{active}" id="match-{mk}" data-match="{mk}">
+      <div class="mgr-grid">{top3_match}</div>
+      <div class="sec-row"><span class="sec-label">All managers</span><div class="sec-line"></div></div>
+      {all_rows}
+    </div>'''
+
+# Match selector buttons
+match_btns_html = ''
+for mk in active_matches:
+    active = ' active' if mk == (active_matches[-1] if active_matches else '') else ''
+    match_btns_html += f'<button class="match-btn{active}" onclick="switchMatch(\'{mk}\')">{MATCH_LABELS[mk]}</button>'
+
+# ── Build roster HTML ─────────────────────────────────────────────────
+roster_tabs_html = ''
+for oi, owner in enumerate(owners_ordered):
+    col_hex = BAR_COLORS[oi % len(BAR_COLORS)]
+    av_bg   = hex_to_rgba(col_hex, 0.18)
+    av_bdr  = hex_to_rgba(col_hex, 0.55)
+    total   = round(df[df['Owner'] == owner]['CurrentPoints'].sum(), 2)
+    rank    = oi + 1
+    rdf     = df[df['Owner'] == owner].sort_values('CurrentPoints', ascending=False)
+    
+    rows = ''
+    for _, prow in rdf.iterrows():
+        tp  = prow['CurrentPoints']
+        pc  = 'pts-pos' if tp > 0 else ('pts-neg' if tp < 0 else 'pts-zero')
+        mult = prow['Multiplier']
+        if mult == 2.0:   badge = '<span class="role-c">⚡ C</span>'
+        elif mult == 1.5: badge = '<span class="role-vc">🔵 VC</span>'
+        elif mult == 0.5: badge = '<span class="role-bench">🪑 Bench</span>'
+        else:             badge = '—'
+        
+        match_cols = ''
+        for mk in active_matches:
+            v = prow.get(mk, 0.0)
+            mc = 'pts-pos' if v > 0 else ('pts-neg' if v < 0 else 'pts-zero')
+            vs = f'{v:.1f}' if v != 0 else '—'
+            match_cols += f'<td style="text-align:right" class="{mc}">{vs}</td>'
+        
+        rows += f'''<tr>
+          <td>{prow["PlayerName"]}</td>
+          <td style="text-align:center">{badge}</td>
+          <td style="text-align:right" class="{pc}">{tp:.2f}</td>
+          {match_cols}
+        </tr>'''
+    
+    match_headers = ''.join(f'<th style="text-align:right">{MATCH_LABELS[mk].split(":")[0]}</th>' for mk in active_matches)
+    
+    active = ' active' if oi == 0 else ''
+    roster_tabs_html += f'''<div class="roster-tab{active}" id="roster-{owner.replace(" ","-")}">
+      <div class="roster-header-card">
+        <div class="roster-av" style="background:{av_bg};color:{col_hex};border-color:{av_bdr}">{initials(owner)}</div>
+        <div>
+          <div class="roster-name" style="color:{col_hex}">{owner}</div>
+          <div class="roster-sub">Rank #{rank} &nbsp;·&nbsp; {total:.2f} pts total</div>
+        </div>
+      </div>
+      <table class="player-table">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.08)">
+          <th>Player</th><th style="text-align:center">Role</th><th style="text-align:right">Total</th>
+          {match_headers}
+        </tr>
+        {rows}
+      </table>
+    </div>'''
+
+# Roster selector buttons
+roster_btns_html = ''
+for oi, owner in enumerate(owners_ordered):
+    col_hex = BAR_COLORS[oi % len(BAR_COLORS)]
+    av_bg   = hex_to_rgba(col_hex, 0.18)
+    av_bdr  = hex_to_rgba(col_hex, 0.45)
+    active  = ' active' if oi == 0 else ''
+    roster_btns_html += f'<button class="roster-btn{active}" onclick="switchRoster(\'{owner.replace(" ","-")}\')" style="border-color:{av_bdr};color:{col_hex}">{initials(owner)}<span style="font-size:10px;display:block;margin-top:1px;opacity:0.7">{owner}</span></button>'
+
 # ── Build dots HTML ───────────────────────────────────────────────────
 dots_html = ''
 for i in range(len(SLIDESHOW_IMAGES)):
@@ -651,7 +779,7 @@ html = f"""
   100%{{ transform:scale(2.2);opacity:0; }}
 }}
 * {{ margin:0; padding:0; box-sizing:border-box; }}
-body {{ background:#050A1E; font-family:'DM Sans',system-ui,sans-serif; color:#C8D4F0; min-height:100vh; overflow-x:hidden; }}
+body {{ background:transparent; font-family:'DM Sans',system-ui,sans-serif; color:#C8D4F0; min-height:100vh; overflow-x:hidden; }}
 #bg {{ position:fixed; inset:0; z-index:0; }}
 .slide {{ position:absolute; inset:0; background-size:cover; background-position:center; transition:opacity 1.6s ease; }}
 #slide-b {{ opacity:0; }}
@@ -701,6 +829,36 @@ body {{ background:#050A1E; font-family:'DM Sans',system-ui,sans-serif; color:#C
 .lb-bar {{ height:3px; border-radius:2px; }}
 .lb-pts {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; min-width:60px; text-align:right; }}
 .lb-row:nth-child(1){{animation-delay:0.05s}}.lb-row:nth-child(2){{animation-delay:0.09s}}.lb-row:nth-child(3){{animation-delay:0.13s}}.lb-row:nth-child(4){{animation-delay:0.17s}}.lb-row:nth-child(5){{animation-delay:0.21s}}.lb-row:nth-child(6){{animation-delay:0.25s}}.lb-row:nth-child(7){{animation-delay:0.29s}}.lb-row:nth-child(8){{animation-delay:0.33s}}.lb-row:nth-child(9){{animation-delay:0.37s}}.lb-row:nth-child(10){{animation-delay:0.41s}}.lb-row:nth-child(11){{animation-delay:0.45s}}.lb-row:nth-child(12){{animation-delay:0.49s}}.lb-row:nth-child(13){{animation-delay:0.53s}}
+
+.mgr-grid {{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }}
+.mgr-card {{ background:linear-gradient(145deg,rgba(10,16,48,0.82),rgba(6,10,32,0.88)); backdrop-filter:blur(20px); border-radius:14px; padding:14px 16px; border:1px solid rgba(255,255,255,0.09); position:relative; overflow:hidden; }}
+.mgr-card::before {{ content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }}
+.mgr-rank {{ font-size:10px; color:#6880AA; margin-bottom:4px; }}
+.mgr-name {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#D0DCEE; }}
+.mgr-pts  {{ font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:#FFD54F; margin-top:4px; }}
+.match-btns {{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }}
+.match-btn {{ background:rgba(8,14,42,0.75); border:1px solid rgba(255,255,255,0.10); border-radius:8px; color:#7A90BC; font-size:11px; font-weight:500; padding:6px 12px; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }}
+.match-btn:hover {{ border-color:rgba(255,213,79,0.3); color:#B0C8E8; }}
+.match-btn.active {{ background:rgba(255,213,79,0.12); border-color:rgba(255,213,79,0.45); color:#FFD54F; font-weight:700; }}
+.match-tab {{ display:none; }} .match-tab.active {{ display:block; }}
+.roster-btns {{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }}
+.roster-btn {{ background:rgba(8,14,42,0.75); border:1px solid; border-radius:10px; font-size:11px; font-weight:700; padding:6px 10px; cursor:pointer; transition:all 0.2s; font-family:'Sora',sans-serif; min-width:52px; text-align:center; }}
+.roster-btn.active {{ background:rgba(255,255,255,0.08); }}
+.roster-tab {{ display:none; }} .roster-tab.active {{ display:block; }}
+.roster-header-card {{ display:flex; align-items:center; gap:14px; margin-bottom:1.2rem; background:linear-gradient(145deg,rgba(10,16,48,0.82),rgba(6,10,32,0.88)); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.09); border-radius:16px; padding:18px; position:relative; overflow:hidden; }}
+.roster-header-card::before {{ content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }}
+.roster-av {{ width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:16px; font-weight:700; border:2px solid; flex-shrink:0; }}
+.roster-name {{ font-family:'Sora',sans-serif; font-size:19px; font-weight:700; }}
+.roster-sub {{ font-size:12px; color:#6880AA; margin-top:2px; }}
+.player-table {{ width:100%; border-collapse:collapse; font-size:12px; }}
+.player-table tr {{ border-bottom:1px solid rgba(255,255,255,0.05); }}
+.player-table td, .player-table th {{ padding:8px 6px; color:#C8D4F0; font-weight:400; text-align:left; }}
+.player-table th {{ color:#6880AA; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }}
+.role-c {{ background:rgba(255,213,79,0.14); color:#FFD54F; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(255,213,79,0.25); }}
+.role-vc {{ background:rgba(74,144,217,0.14); color:#7AB8F5; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(74,144,217,0.25); }}
+.role-bench {{ background:rgba(255,255,255,0.05); color:#6880AA; font-size:10px; padding:2px 8px; border-radius:6px; }}
+.pts-pos {{ color:#69F0AE; font-weight:700; }} .pts-neg {{ color:#FF5252; font-weight:700; }} .pts-zero {{ color:#3A4A7A; }}
+
 #slide-label {{ position:fixed; bottom:16px; right:18px; z-index:10; font-size:11px; color:rgba(200,212,240,0.28); pointer-events:none; }}
 </style>
 </head>
@@ -727,10 +885,12 @@ body {{ background:#050A1E; font-family:'DM Sans',system-ui,sans-serif; color:#C
     {lb_html}
   </div>
   <div class="tab-content" id="tab-1">
-    <div style="color:#8FA8D0;font-size:13px;padding:20px 0;text-align:center">Match Day details — use the Streamlit selectbox below ↓</div>
+    <div class="match-btns">{match_btns_html}</div>
+    {match_tabs_html}
   </div>
   <div class="tab-content" id="tab-2">
-    <div style="color:#8FA8D0;font-size:13px;padding:20px 0;text-align:center">Roster details — use the Streamlit selectbox below ↓</div>
+    <div class="roster-btns">{roster_btns_html}</div>
+    {roster_tabs_html}
   </div>
 </div>
 <div id="slide-label"></div>
@@ -780,10 +940,29 @@ function switchTab(idx) {{
     c.classList.toggle('active', i === idx);
   }});
 }}
+
+function switchMatch(mk) {{
+  document.querySelectorAll('.match-tab').forEach(function(t) {{ t.classList.remove('active'); }});
+  document.querySelectorAll('.match-btn').forEach(function(b) {{ b.classList.remove('active'); }});
+  var el = document.getElementById('match-' + mk);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.match-btn').forEach(function(b) {{
+    if (b.getAttribute('onclick').indexOf(mk) > -1) b.classList.add('active');
+  }});
+}}
+function switchRoster(owner) {{
+  document.querySelectorAll('.roster-tab').forEach(function(t) {{ t.classList.remove('active'); }});
+  document.querySelectorAll('.roster-btn').forEach(function(b) {{ b.classList.remove('active'); }});
+  var el = document.getElementById('roster-' + owner);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.roster-btn').forEach(function(b) {{
+    if (b.getAttribute('onclick').indexOf(owner) > -1) b.classList.add('active');
+  }});
+}}
 </script>
 </body>
 </html>
 """
 
-components.html(html, height=900, scrolling=True)
+components.html(html, height=1800, scrolling=True)
 
