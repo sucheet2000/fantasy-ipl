@@ -133,7 +133,7 @@ st.markdown("""
 }
 
 /* ── Typography ── */
-body, p, span, div, label, td, th { color: #F0F6FF !important; }
+body, p, span, div, label, td, th { color: #FFFFFF !important; }
 
 /* ── Streamlit tabs — pill style ── */
 [data-testid="stTabs"] {
@@ -167,7 +167,7 @@ body, p, span, div, label, td, th { color: #F0F6FF !important; }
 [data-testid="stSelectbox"] > div > div {
     background: linear-gradient(135deg, rgba(10,16,48,0.88), rgba(6,10,32,0.92)) !important;
     border: 1px solid rgba(255,255,255,0.09) !important;
-    color: #F0F6FF !important;
+    color: #FFFFFF !important;
     border-radius: 10px !important;
     backdrop-filter: blur(14px);
 }
@@ -185,7 +185,7 @@ body, p, span, div, label, td, th { color: #F0F6FF !important; }
 }
 [data-testid="stDataFrame"] tbody tr td {
     background: rgba(8,12,38,0.82) !important;
-    color: #F0F6FF !important;
+    color: #FFFFFF !important;
     border-bottom: 1px solid rgba(255,255,255,0.04) !important;
     font-size: 13px !important;
 }
@@ -355,7 +355,7 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 .player-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .player-table tr { border-bottom: 1px solid rgba(255,255,255,0.05); }
 .player-table tr:last-child { border-bottom: none; }
-.player-table td { padding: 8px 6px; color: #F0F6FF !important; }
+.player-table td { padding: 8px 6px; color: #FFFFFF !important; }
 .role-c     { background: rgba(255,213,79,0.14); color: #FFD54F !important; font-size: 10px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; border: 1px solid rgba(255,213,79,0.25); }
 .role-vc    { background: rgba(74,144,217,0.14); color: #7AB8F5 !important; font-size: 10px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; border: 1px solid rgba(74,144,217,0.25); }
 .role-bench { background: rgba(255,255,255,0.05); color: #6880AA !important; font-size: 10px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
@@ -742,13 +742,13 @@ for oi, owner in enumerate(owners_ordered):
           <div class="roster-sub">Rank #{rank} &nbsp;·&nbsp; {total:.2f} pts total</div>
         </div>
       </div>
-      <table class="player-table">
+      <div class="player-table-wrap"><table class="player-table">
         <tr style="border-bottom:1px solid rgba(255,255,255,0.08)">
           <th>Player</th><th style="text-align:center">Role</th><th style="text-align:right">Total</th>
           {match_headers}
         </tr>
         {rows}
-      </table>
+      </table></div>
     </div>'''
 
 # Roster selector buttons
@@ -789,7 +789,7 @@ html = f"""
   100%{{ transform:scale(2.2);opacity:0; }}
 }}
 * {{ margin:0; padding:0; box-sizing:border-box; }}
-html, body {{ background:transparent !important; font-family:'DM Sans',system-ui,sans-serif; color:#F0F6FF; min-height:100vh; overflow-x:hidden; }}
+html, body {{ background:transparent !important; font-family:'DM Sans',system-ui,sans-serif; color:#FFFFFF; min-height:100vh; overflow-x:hidden; }}
 
 
 
@@ -797,7 +797,7 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 #app {{ position:relative; z-index:2; max-width:900px; margin:0 auto; padding:28px 20px 56px; }}
 .header {{ text-align:center; padding:32px 0 10px; animation:float-up 0.7s ease both; }}
 .big-title {{ font-family:'Sora',sans-serif; font-size:36px; font-weight:800; color:#FFD54F; text-shadow:0 0 40px rgba(255,213,79,0.5),0 2px 12px rgba(0,0,0,0.8); letter-spacing:0.01em; }}
-.subtitle {{ font-size:13px; color:#AAC4E8; margin-top:6px; letter-spacing:0.04em; }}
+.subtitle {{ font-size:13px; color:#C8D8F0; margin-top:6px; letter-spacing:0.04em; }}
 .dots {{ display:flex; justify-content:center; gap:7px; margin:14px 0 26px; }}
 .dot {{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.1); transition:all 0.35s cubic-bezier(.34,1.56,.64,1); cursor:pointer; position:relative; }}
 .dot.active {{ background:#FFD54F; border-color:#FFD54F; transform:scale(1.5); box-shadow:0 0 8px rgba(255,213,79,0.6); }}
@@ -812,7 +812,7 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .pod-card.bronze::before {{ background:linear-gradient(90deg,transparent,rgba(200,130,60,0.35),transparent); }}
 .pod-medal {{ font-size:28px; margin-bottom:8px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }}
 .pod-rank-label {{ font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:rgba(200,212,240,0.4); margin-bottom:4px; }}
-.pod-name {{ font-family:'Sora',sans-serif; font-size:15px; font-weight:700; color:#EEF4FF; }}
+.pod-name {{ font-family:'Sora',sans-serif; font-size:15px; font-weight:700; color:#FFFFFF; }}
 .pod-name.g {{ color:#FFD54F; text-shadow:0 0 14px rgba(255,213,79,0.4); }}
 .pod-pts {{ font-family:'Sora',sans-serif; font-size:28px; font-weight:800; margin-top:8px; line-height:1; }}
 .pod-pts.g {{ color:#FFD54F; }} .pod-pts.s {{ color:#C8D4EC; }} .pod-pts.b {{ color:#D4894A; }}
@@ -827,12 +827,12 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .tab.active {{ color:#FFD54F; background:linear-gradient(135deg,rgba(255,213,79,0.14),rgba(255,213,79,0.06)); box-shadow:inset 0 1px 0 rgba(255,213,79,0.22); font-weight:700; }}
 .tab-content {{ display:none; }} .tab-content.active {{ display:block; }}
 .sec-row {{ display:flex; align-items:center; gap:10px; margin:18px 0 10px; }}
-.sec-label {{ font-size:10px; font-weight:700; color:#8090C0; text-transform:uppercase; letter-spacing:0.14em; white-space:nowrap; }}
+.sec-label {{ font-size:10px; font-weight:700; color:#AAB8D8; text-transform:uppercase; letter-spacing:0.14em; white-space:nowrap; }}
 .sec-line {{ flex:1; height:1px; background:linear-gradient(90deg,rgba(104,128,170,0.3),transparent); }}
 .lb-row {{ display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:12px; margin-bottom:5px; background:linear-gradient(135deg,rgba(8,14,48,0.96),rgba(5,9,30,0.97)); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,0.06); position:relative; overflow:hidden; transition:all 0.2s; animation:float-up 0.5s ease both; }}
 .lb-row:hover {{ background:linear-gradient(135deg,rgba(12,20,56,0.88),rgba(8,14,44,0.92)); border-color:rgba(255,255,255,0.12); transform:translateX(3px); }}
 .lb-row::before {{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; border-radius:1px; background:var(--accent,#4A90D9); opacity:0.6; }}
-.lb-rank {{ font-family:'Sora',sans-serif; font-size:11px; font-weight:600; color:#9AAAD8; width:20px; text-align:center; flex-shrink:0; }}
+.lb-rank {{ font-family:'Sora',sans-serif; font-size:11px; font-weight:600; color:#A0B0D0; width:20px; text-align:center; flex-shrink:0; }}
 .lb-av {{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:10px; font-weight:700; flex-shrink:0; border:1px solid; }}
 .lb-name {{ font-size:13px; font-weight:500; flex:1; color:#F4F8FF; font-weight:600; }}
 .lb-bar-wrap {{ flex:2; height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }}
@@ -843,8 +843,8 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .mgr-grid {{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }}
 .mgr-card {{ background:linear-gradient(145deg,rgba(8,14,46,0.97),rgba(5,8,28,0.98)); backdrop-filter:blur(20px); border-radius:14px; padding:14px 16px; border:1px solid rgba(255,255,255,0.09); position:relative; overflow:hidden; }}
 .mgr-card::before {{ content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }}
-.mgr-rank {{ font-size:10px; color:#6880AA; margin-bottom:4px; }}
-.mgr-name {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#F0F6FF; }}
+.mgr-rank {{ font-size:10px; color:#8898C8; margin-bottom:4px; }}
+.mgr-name {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#FFFFFF; }}
 .mgr-pts  {{ font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:#FFD54F; margin-top:4px; }}
 .match-btns {{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }}
 .match-btn {{ background:rgba(6,10,36,0.95); border:1px solid rgba(255,255,255,0.10); border-radius:8px; color:#7A90BC; font-size:11px; font-weight:500; padding:6px 12px; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }}
@@ -859,14 +859,14 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .roster-header-card::before {{ content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }}
 .roster-av {{ width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:16px; font-weight:700; border:2px solid; flex-shrink:0; }}
 .roster-name {{ font-family:'Sora',sans-serif; font-size:19px; font-weight:700; }}
-.roster-sub {{ font-size:12px; color:#6880AA; margin-top:2px; }}
+.roster-sub {{ font-size:12px; color:#8898C8; margin-top:2px; }}
 .player-table {{ width:100%; border-collapse:collapse; font-size:12px; }}
 .player-table tr {{ border-bottom:1px solid rgba(255,255,255,0.05); }}
-.player-table td, .player-table th {{ padding:8px 6px; color:#E8F0FF; font-weight:400; text-align:left; }}
-.player-table th {{ color:#6880AA; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }}
+.player-table td, .player-table th {{ padding:8px 6px; color:#FFFFFF; font-weight:400; text-align:left; }}
+.player-table th {{ color:#8898C8; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }}
 .role-c {{ background:rgba(255,213,79,0.14); color:#FFD54F; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(255,213,79,0.25); }}
 .role-vc {{ background:rgba(74,144,217,0.14); color:#7AB8F5; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(74,144,217,0.25); }}
-.role-bench {{ background:rgba(255,255,255,0.05); color:#6880AA; font-size:10px; padding:2px 8px; border-radius:6px; }}
+.role-bench {{ background:rgba(255,255,255,0.05); color:#8898C8; font-size:10px; padding:2px 8px; border-radius:6px; }}
 .pts-pos {{ color:#69F0AE; font-weight:700; }} .pts-neg {{ color:#FF5252; font-weight:700; }} .pts-zero {{ color:#3A4A7A; }}
 
 #slide-label {{ position:fixed; bottom:16px; right:18px; z-index:10; font-size:11px; color:rgba(200,212,240,0.28); pointer-events:none; }}
