@@ -24,6 +24,12 @@ st.markdown("""
 }
 section[data-testid="stMain"] > div { padding: 0 !important; }
 iframe { border: none !important; background: transparent !important; }
+[data-testid="stCustomComponentV1"] iframe,
+[data-testid="stIFrame"] iframe,
+iframe[title="streamlit_components.v1.html"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -779,15 +785,15 @@ html = f"""
   100%{{ transform:scale(2.2);opacity:0; }}
 }}
 * {{ margin:0; padding:0; box-sizing:border-box; }}
-body {{ background:transparent; font-family:'DM Sans',system-ui,sans-serif; color:#C8D4F0; min-height:100vh; overflow-x:hidden; }}
-#bg {{ position:fixed; inset:0; z-index:0; }}
-.slide {{ position:absolute; inset:0; background-size:cover; background-position:center; transition:opacity 1.6s ease; }}
-#slide-b {{ opacity:0; }}
-#bg-overlay {{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(4,8,26,0.38) 0%,rgba(4,8,26,0.55) 40%,rgba(4,8,26,0.92) 75%,rgba(4,8,26,0.99) 100%); }}
+html, body {{ background:transparent !important; font-family:'DM Sans',system-ui,sans-serif; color:#E0EAFF; min-height:100vh; overflow-x:hidden; }}
+
+
+
+
 #app {{ position:relative; z-index:2; max-width:900px; margin:0 auto; padding:28px 20px 56px; }}
 .header {{ text-align:center; padding:32px 0 10px; animation:float-up 0.7s ease both; }}
 .big-title {{ font-family:'Sora',sans-serif; font-size:36px; font-weight:800; color:#FFD54F; text-shadow:0 0 40px rgba(255,213,79,0.5),0 2px 12px rgba(0,0,0,0.8); letter-spacing:0.01em; }}
-.subtitle {{ font-size:13px; color:#8FA8D0; margin-top:6px; letter-spacing:0.04em; }}
+.subtitle {{ font-size:13px; color:#AAC4E8; margin-top:6px; letter-spacing:0.04em; }}
 .dots {{ display:flex; justify-content:center; gap:7px; margin:14px 0 26px; }}
 .dot {{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.1); transition:all 0.35s cubic-bezier(.34,1.56,.64,1); cursor:pointer; position:relative; }}
 .dot.active {{ background:#FFD54F; border-color:#FFD54F; transform:scale(1.5); box-shadow:0 0 8px rgba(255,213,79,0.6); }}
@@ -817,14 +823,14 @@ body {{ background:transparent; font-family:'DM Sans',system-ui,sans-serif; colo
 .tab.active {{ color:#FFD54F; background:linear-gradient(135deg,rgba(255,213,79,0.14),rgba(255,213,79,0.06)); box-shadow:inset 0 1px 0 rgba(255,213,79,0.22); font-weight:700; }}
 .tab-content {{ display:none; }} .tab-content.active {{ display:block; }}
 .sec-row {{ display:flex; align-items:center; gap:10px; margin:18px 0 10px; }}
-.sec-label {{ font-size:10px; font-weight:700; color:#6880AA; text-transform:uppercase; letter-spacing:0.14em; white-space:nowrap; }}
+.sec-label {{ font-size:10px; font-weight:700; color:#8090C0; text-transform:uppercase; letter-spacing:0.14em; white-space:nowrap; }}
 .sec-line {{ flex:1; height:1px; background:linear-gradient(90deg,rgba(104,128,170,0.3),transparent); }}
 .lb-row {{ display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:12px; margin-bottom:5px; background:linear-gradient(135deg,rgba(8,14,42,0.75),rgba(6,10,34,0.80)); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,0.06); position:relative; overflow:hidden; transition:all 0.2s; animation:float-up 0.5s ease both; }}
 .lb-row:hover {{ background:linear-gradient(135deg,rgba(12,20,56,0.88),rgba(8,14,44,0.92)); border-color:rgba(255,255,255,0.12); transform:translateX(3px); }}
 .lb-row::before {{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; border-radius:1px; background:var(--accent,#4A90D9); opacity:0.6; }}
-.lb-rank {{ font-family:'Sora',sans-serif; font-size:11px; font-weight:600; color:#6880AA; width:20px; text-align:center; flex-shrink:0; }}
+.lb-rank {{ font-family:'Sora',sans-serif; font-size:11px; font-weight:600; color:#8898CC; width:20px; text-align:center; flex-shrink:0; }}
 .lb-av {{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:10px; font-weight:700; flex-shrink:0; border:1px solid; }}
-.lb-name {{ font-size:13px; font-weight:500; flex:1; color:#D0DCEE; }}
+.lb-name {{ font-size:13px; font-weight:500; flex:1; color:#E8F0FF; }}
 .lb-bar-wrap {{ flex:2; height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }}
 .lb-bar {{ height:3px; border-radius:2px; }}
 .lb-pts {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; min-width:60px; text-align:right; }}
@@ -863,11 +869,7 @@ body {{ background:transparent; font-family:'DM Sans',system-ui,sans-serif; colo
 </style>
 </head>
 <body>
-<div id="bg">
-  <div class="slide" id="slide-a"></div>
-  <div class="slide" id="slide-b"></div>
-  <div id="bg-overlay"></div>
-</div>
+<!-- bg handled by parent page -->
 <div id="app">
   <div class="header">
     <div class="big-title">🏏 IPL Fantasy 2026</div>
@@ -897,30 +899,22 @@ body {{ background:transparent; font-family:'DM Sans',system-ui,sans-serif; colo
 <script>
 var IMAGES = {images_js};
 var INTERVAL = 5000;
-var slideA = document.getElementById('slide-a');
-var slideB = document.getElementById('slide-b');
-var labelEl = document.getElementById('slide-label');
 var current = 0, showingA = true;
-if (IMAGES.length > 0) {{
-  slideA.style.backgroundImage = 'url(' + IMAGES[0] + ')';
-  slideA.style.opacity = '1';
-  labelEl.textContent = 'Slide 1 / ' + IMAGES.length;
-  setInterval(function() {{
-    var next = (current + 1) % IMAGES.length;
-    var inc = showingA ? slideB : slideA;
-    var out = showingA ? slideA : slideB;
-    inc.style.backgroundImage = 'url(' + IMAGES[next] + ')';
-    inc.style.opacity = '1';
-    out.style.opacity = '0';
-    showingA = !showingA;
-    current = next;
-    labelEl.textContent = 'Slide ' + (next+1) + ' / ' + IMAGES.length;
-    document.querySelectorAll('.dot').forEach(function(d,i) {{
-      d.classList.toggle('active', i === next);
-    }});
-  }}, INTERVAL);
+function getParentEl(id) {{
+  try {{
+    var doc = window.frameElement ? window.frameElement.ownerDocument : document;
+    return doc.getElementById(id);
+  }} catch(e) {{ return null; }}
+}}
+function updateDots(idx) {{
+  document.querySelectorAll('.dot').forEach(function(d,i) {{
+    d.classList.toggle('active', i === idx);
+  }});
 }}
 function jumpTo(idx) {{
+  var slideA = getParentEl('slide-a');
+  var slideB = getParentEl('slide-b');
+  if (!slideA) return;
   var inc = showingA ? slideB : slideA;
   var out = showingA ? slideA : slideB;
   inc.style.backgroundImage = 'url(' + IMAGES[idx] + ')';
@@ -928,9 +922,19 @@ function jumpTo(idx) {{
   out.style.opacity = '0';
   showingA = !showingA;
   current = idx;
-  document.querySelectorAll('.dot').forEach(function(d,i) {{
-    d.classList.toggle('active', i === idx);
-  }});
+  updateDots(idx);
+}}
+if (IMAGES.length > 0) {{
+  var slideA0 = getParentEl('slide-a');
+  if (slideA0) {{
+    slideA0.style.backgroundImage = 'url(' + IMAGES[0] + ')';
+    slideA0.style.opacity = '1';
+  }}
+  updateDots(0);
+  setInterval(function() {{
+    var next = (current + 1) % IMAGES.length;
+    jumpTo(next);
+  }}, INTERVAL);
 }}
 function switchTab(idx) {{
   document.querySelectorAll('.tab').forEach(function(t,i) {{
