@@ -17,16 +17,20 @@ st.markdown("""
 [data-testid="stDecoration"],
 [data-testid="stStatusWidget"],
 .stDeployButton { display: none !important; }
-[data-testid="stAppViewContainer"] { background: #050A1E !important; }
 [data-testid="block-container"] {
     padding: 0 !important;
     max-width: 100% !important;
 }
 section[data-testid="stMain"] > div { padding: 0 !important; }
-iframe { border: none !important; background: transparent !important; }
-[data-testid="stCustomComponentV1"] iframe,
-[data-testid="stIFrame"] iframe,
-iframe[title="streamlit_components.v1.html"] {
+iframe { 
+    border: none !important; 
+    background: transparent !important;
+    background-color: transparent !important;
+}
+/* Force Streamlit component iframes transparent */
+div[data-testid] iframe,
+.stCustomComponentV1 iframe,
+[class*="component"] iframe {
     background: transparent !important;
     background-color: transparent !important;
 }
@@ -120,10 +124,10 @@ st.markdown("""
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(180deg,
-        rgba(4,8,26,0.48) 0%,
-        rgba(4,8,26,0.65) 42%,
-        rgba(4,8,26,0.93) 78%,
-        rgba(4,8,26,0.99) 100%);
+        rgba(4,8,26,0.08) 0%,
+        rgba(4,8,26,0.22) 42%,
+        rgba(4,8,26,0.72) 78%,
+        rgba(4,8,26,0.88) 100%);
     z-index: 1;
     pointer-events: none;
 }
@@ -969,4 +973,28 @@ function switchRoster(owner) {{
 """
 
 components.html(html, height=1800, scrolling=True)
+
+# Force iframe transparency via JS
+st.markdown("""
+<script>
+(function() {
+  function fixIframes() {
+    document.querySelectorAll('iframe').forEach(function(f) {
+      f.setAttribute('allowtransparency', 'true');
+      f.style.background = 'transparent';
+      f.style.backgroundColor = 'transparent';
+      try {
+        if (f.contentDocument) {
+          f.contentDocument.documentElement.style.background = 'transparent';
+          f.contentDocument.body.style.background = 'transparent';
+        }
+      } catch(e) {}
+    });
+  }
+  fixIframes();
+  setTimeout(fixIframes, 500);
+  setTimeout(fixIframes, 1500);
+})();
+</script>
+""", unsafe_allow_html=True)
 
