@@ -133,7 +133,7 @@ st.markdown("""
 }
 
 /* ── Typography ── */
-body, p, span, div, label, td, th { color: #C8D4F0 !important; }
+body, p, span, div, label, td, th { color: #F0F6FF !important; }
 
 /* ── Streamlit tabs — pill style ── */
 [data-testid="stTabs"] {
@@ -167,7 +167,7 @@ body, p, span, div, label, td, th { color: #C8D4F0 !important; }
 [data-testid="stSelectbox"] > div > div {
     background: linear-gradient(135deg, rgba(10,16,48,0.88), rgba(6,10,32,0.92)) !important;
     border: 1px solid rgba(255,255,255,0.09) !important;
-    color: #C8D4F0 !important;
+    color: #F0F6FF !important;
     border-radius: 10px !important;
     backdrop-filter: blur(14px);
 }
@@ -185,7 +185,7 @@ body, p, span, div, label, td, th { color: #C8D4F0 !important; }
 }
 [data-testid="stDataFrame"] tbody tr td {
     background: rgba(8,12,38,0.82) !important;
-    color: #C8D4F0 !important;
+    color: #F0F6FF !important;
     border-bottom: 1px solid rgba(255,255,255,0.04) !important;
     font-size: 13px !important;
 }
@@ -299,7 +299,7 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 .lb-row {
     display: flex; align-items: center; gap: 12px;
     padding: 10px 14px; border-radius: 12px; margin-bottom: 5px;
-    background: linear-gradient(135deg, rgba(8,14,42,0.75), rgba(6,10,34,0.82));
+    background: linear-gradient(135deg, rgba(6,10,36,0.95), rgba(6,10,34,0.82));
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255,255,255,0.06);
     position: relative; overflow: hidden;
@@ -355,7 +355,7 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 .player-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .player-table tr { border-bottom: 1px solid rgba(255,255,255,0.05); }
 .player-table tr:last-child { border-bottom: none; }
-.player-table td { padding: 8px 6px; color: #C8D4F0 !important; }
+.player-table td { padding: 8px 6px; color: #F0F6FF !important; }
 .role-c     { background: rgba(255,213,79,0.14); color: #FFD54F !important; font-size: 10px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; border: 1px solid rgba(255,213,79,0.25); }
 .role-vc    { background: rgba(74,144,217,0.14); color: #7AB8F5 !important; font-size: 10px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; border: 1px solid rgba(74,144,217,0.25); }
 .role-bench { background: rgba(255,255,255,0.05); color: #6880AA !important; font-size: 10px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
