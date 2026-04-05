@@ -47,6 +47,8 @@ MATCH_LABELS = {
     'Match7': 'M7: PBKS vs CSK',
     'Match8': 'M8: DC vs MI',
     'Match9': 'M9: RR vs GT',
+    'Match10': 'M10: SRH vs LSG',
+    'Match11': 'M11: RCB vs CSK',
 }
 
 BAR_COLORS = [
@@ -127,10 +129,10 @@ st.markdown("""
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(180deg,
-        rgba(4,8,26,0.18) 0%,
-        rgba(4,8,26,0.40) 42%,
-        rgba(4,8,26,0.82) 78%,
-        rgba(4,8,26,0.94) 100%);
+        rgba(4,8,26,0.03) 0%,
+        rgba(4,8,26,0.12) 42%,
+        rgba(4,8,26,0.50) 78%,
+        rgba(4,8,26,0.68) 100%);
     z-index: 1;
     pointer-events: none;
 }
