@@ -143,10 +143,10 @@ st.markdown("""
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(180deg,
-        rgba(4,8,26,0.03) 0%,
-        rgba(4,8,26,0.12) 42%,
-        rgba(4,8,26,0.50) 78%,
-        rgba(4,8,26,0.68) 100%);
+        rgba(4,8,26,0.18) 0%,
+        rgba(4,8,26,0.40) 42%,
+        rgba(4,8,26,0.82) 78%,
+        rgba(4,8,26,0.94) 100%);
     z-index: 1;
     pointer-events: none;
 }
@@ -761,7 +761,7 @@ for oi, owner in enumerate(owners_ordered):
           <div class="roster-sub">Rank #{rank} &nbsp;·&nbsp; {total:.2f} pts total</div>
         </div>
       </div>
-      <div class="player-table-wrap"><table class="player-table">
+      <div class="player-table-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="player-table" style="min-width:600px">
         <tr style="border-bottom:1px solid rgba(255,255,255,0.08)">
           <th>Player</th><th style="text-align:center">Role</th><th style="text-align:right">Total</th>
           {match_headers}
@@ -879,9 +879,9 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .roster-av {{ width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:16px; font-weight:700; border:2px solid; flex-shrink:0; }}
 .roster-name {{ font-family:'Sora',sans-serif; font-size:19px; font-weight:700; }}
 .roster-sub {{ font-size:12px; color:#8898C8; margin-top:2px; }}
-.player-table {{ width:100%; border-collapse:collapse; font-size:12px; }}
+.player-table {{ width:100%; border-collapse:collapse; font-size:11px; }}
 .player-table tr {{ border-bottom:1px solid rgba(255,255,255,0.05); }}
-.player-table td, .player-table th {{ padding:8px 6px; color:#FFFFFF; font-weight:400; text-align:left; }}
+.player-table td, .player-table th {{ padding:6px 4px; color:#FFFFFF; font-weight:400; text-align:left; white-space:nowrap; }}
 .player-table th {{ color:#8898C8; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }}
 .role-c {{ background:rgba(255,213,79,0.14); color:#FFD54F; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(255,213,79,0.25); }}
 .role-vc {{ background:rgba(74,144,217,0.14); color:#7AB8F5; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(74,144,217,0.25); }}
