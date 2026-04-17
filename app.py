@@ -611,6 +611,30 @@ lb = df.groupby('Owner')['CurrentPoints'].sum().sort_values(ascending=False).res
 lb.columns = ['Manager', 'Total']
 max_pts        = lb['Total'].max()
 owners_ordered = lb['Manager'].tolist()
+
+# ── Rank-over-time data for position tracker chart ────────────────────
+rank_over_time = {}  # {manager: [rank_after_m1, rank_after_m2, ...]}
+cumulative = {mgr: 0.0 for mgr in owners_ordered}
+match_rank_labels = []
+for mk in active_matches:
+    match_rank_labels.append(MATCH_LABELS[mk].split(':')[0])
+    for mgr in owners_ordered:
+        pts = df[df['Owner'] == mgr][mk].sum()
+        cumulative[mgr] = round(cumulative[mgr] + pts, 2)
+    sorted_mgrs = sorted(cumulative.keys(), key=lambda m: cumulative[m], reverse=True)
+    for rank_i, mgr in enumerate(sorted_mgrs):
+        if mgr not in rank_over_time:
+            rank_over_time[mgr] = []
+        rank_over_time[mgr].append(rank_i + 1)
+
+import json as _json
+rank_chart_json = _json.dumps({
+    'labels': match_rank_labels,
+    'managers': owners_ordered,
+    'colors': BAR_COLORS[:len(owners_ordered)],
+    'ranks': {mgr: rank_over_time.get(mgr, []) for mgr in owners_ordered},
+})
+
 n_matches      = len(active_matches)
 
 def last_delta(manager):
@@ -761,7 +785,7 @@ for oi, owner in enumerate(owners_ordered):
           <div class="roster-sub">Rank #{rank} &nbsp;·&nbsp; {total:.2f} pts total</div>
         </div>
       </div>
-      <div class="player-table-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="player-table" style="min-width:600px">
+      <div class="player-table-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="player-table" style="min-width:600px">
         <tr style="border-bottom:1px solid rgba(255,255,255,0.08)">
           <th>Player</th><th style="text-align:center">Role</th><th style="text-align:right">Total</th>
           {match_headers}
@@ -879,9 +903,9 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .roster-av {{ width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:16px; font-weight:700; border:2px solid; flex-shrink:0; }}
 .roster-name {{ font-family:'Sora',sans-serif; font-size:19px; font-weight:700; }}
 .roster-sub {{ font-size:12px; color:#8898C8; margin-top:2px; }}
-.player-table {{ width:100%; border-collapse:collapse; font-size:11px; }}
+.player-table {{ width:100%; border-collapse:collapse; font-size:12px; }}
 .player-table tr {{ border-bottom:1px solid rgba(255,255,255,0.05); }}
-.player-table td, .player-table th {{ padding:6px 4px; color:#FFFFFF; font-weight:400; text-align:left; white-space:nowrap; }}
+.player-table td, .player-table th {{ padding:8px 6px; color:#FFFFFF; font-weight:400; text-align:left; }}
 .player-table th {{ color:#8898C8; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }}
 .role-c {{ background:rgba(255,213,79,0.14); color:#FFD54F; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(255,213,79,0.25); }}
 .role-vc {{ background:rgba(74,144,217,0.14); color:#7AB8F5; font-size:10px; padding:2px 8px; border-radius:6px; white-space:nowrap; border:1px solid rgba(74,144,217,0.25); }}
@@ -908,6 +932,89 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
   <div class="tab-content active" id="tab-0">
     <div class="sec-row"><span class="sec-label">All managers</span><div class="sec-line"></div></div>
     {lb_html}
+
+    <div class="sec-row" style="margin-top:1.4rem"><span class="sec-label">Position tracker</span><div class="sec-line"></div></div>
+    <div style="background:rgba(6,11,42,0.85);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;margin-bottom:8px">
+      <canvas id="rankChart" height="320"></canvas>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script>
+    (function(){{
+      var d = {rank_chart_json};
+      var n = d.managers.length;
+      var datasets = d.managers.map(function(mgr, i) {{
+        return {{
+          label: mgr,
+          data: d.ranks[mgr],
+          borderColor: d.colors[i % d.colors.length],
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointBackgroundColor: d.colors[i % d.colors.length],
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          tension: 0.35,
+        }};
+      }});
+      var ctx = document.getElementById('rankChart');
+      if (!ctx) return;
+      new Chart(ctx, {{
+        type: 'line',
+        data: {{ labels: d.labels, datasets: datasets }},
+        options: {{
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {{ duration: 600 }},
+          scales: {{
+            y: {{
+              reverse: true,
+              min: 1,
+              max: n,
+              ticks: {{
+                stepSize: 1,
+                color: '#8898C8',
+                font: {{ size: 11 }},
+                callback: function(v) {{ return '#' + v; }}
+              }},
+              grid: {{ color: 'rgba(255,255,255,0.05)' }},
+              border: {{ color: 'rgba(255,255,255,0.1)' }},
+            }},
+            x: {{
+              ticks: {{ color: '#8898C8', font: {{ size: 10 }}, maxRotation: 45 }},
+              grid: {{ color: 'rgba(255,255,255,0.04)' }},
+              border: {{ color: 'rgba(255,255,255,0.1)' }},
+            }}
+          }},
+          plugins: {{
+            legend: {{
+              position: 'bottom',
+              labels: {{
+                color: '#C8D4F0',
+                font: {{ size: 11 }},
+                boxWidth: 14,
+                boxHeight: 3,
+                padding: 10,
+                usePointStyle: true,
+                pointStyle: 'line',
+              }}
+            }},
+            tooltip: {{
+              backgroundColor: 'rgba(6,11,42,0.95)',
+              borderColor: 'rgba(255,255,255,0.12)',
+              borderWidth: 1,
+              titleColor: '#C8D4F0',
+              bodyColor: '#8898C8',
+              padding: 10,
+              callbacks: {{
+                label: function(ctx) {{
+                  return ' ' + ctx.dataset.label + ': #' + ctx.parsed.y;
+                }}
+              }}
+            }}
+          }}
+        }}
+      }});
+    }})();
+    </script>
   </div>
   <div class="tab-content" id="tab-1">
     <div class="match-btns">{match_btns_html}</div>
