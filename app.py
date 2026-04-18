@@ -140,15 +140,7 @@ st.markdown("""
 .stadium-bg svg { width: 100%; height: 100%; }
 
 .scroll-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(180deg,
-        rgba(4,8,26,0.18) 0%,
-        rgba(4,8,26,0.40) 42%,
-        rgba(4,8,26,0.82) 78%,
-        rgba(4,8,26,0.94) 100%);
-    z-index: 1;
-    pointer-events: none;
+    display: none;
 }
 
 /* ── Typography ── */
@@ -316,18 +308,18 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 
 /* ── Leaderboard rows ── */
 .lb-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px; border-radius: 12px; margin-bottom: 5px;
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border-radius: 14px; margin-bottom: 8px;
     background: linear-gradient(135deg, rgba(6,10,36,0.95), rgba(6,10,34,0.82));
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
     position: relative; overflow: hidden;
     transition: all 0.2s ease;
 }
 .lb-row:hover {
-    background: linear-gradient(135deg, rgba(12,20,56,0.88), rgba(8,14,44,0.94));
-    border-color: rgba(255,255,255,0.12);
-    transform: translateX(3px);
+    background: linear-gradient(135deg, rgba(12,20,56,0.92), rgba(8,14,44,0.96));
+    border-color: rgba(255,255,255,0.18);
+    transform: translateX(4px);
 }
 /* left accent bar */
 .lb-row::before {
@@ -338,19 +330,19 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 }
 .lb-rank   {
     font-family: 'Sora', sans-serif;
-    font-size: 11px; font-weight: 600; color: #6880AA !important;
-    width: 20px; text-align: center; flex-shrink: 0;
+    font-size: 15px; font-weight: 800; color: #8898CC !important;
+    width: 28px; text-align: center; flex-shrink: 0;
 }
 .lb-avatar {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 42px; height: 42px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Sora', sans-serif;
-    font-size: 10px; font-weight: 700; flex-shrink: 0;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
 }
-.lb-name   { font-size: 13px; font-weight: 500; color: #D0DCEE !important; flex: 1; }
-.lb-bar-wrap { flex: 2; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
-.lb-bar    { height: 3px; border-radius: 2px; }
-.lb-pts    { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; min-width: 70px; text-align: right; }
+.lb-name   { font-size: 16px; font-weight: 600; color: #E8F0FF !important; flex: 1; }
+.lb-bar-wrap { flex: 2; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.lb-bar    { height: 5px; border-radius: 3px; }
+.lb-pts    { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 800; min-width: 80px; text-align: right; }
 
 /* ── Match day cards ── */
 .mgr-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1rem; }
@@ -876,8 +868,8 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .lb-row:hover {{ background:linear-gradient(135deg,rgba(12,20,56,0.88),rgba(8,14,44,0.92)); border-color:rgba(255,255,255,0.12); transform:translateX(3px); }}
 .lb-row::before {{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; border-radius:1px; background:var(--accent,#4A90D9); opacity:0.6; }}
 .lb-rank {{ font-family:'Sora',sans-serif; font-size:11px; font-weight:600; color:#A0B0D0; width:20px; text-align:center; flex-shrink:0; }}
-.lb-av {{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:10px; font-weight:700; flex-shrink:0; border:1px solid; }}
-.lb-name {{ font-size:13px; font-weight:500; flex:1; color:#F4F8FF; font-weight:600; }}
+.lb-av {{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:13px; font-weight:700; flex-shrink:0; border:2px solid; }}
+.lb-name {{ font-size:16px; font-weight:600; flex:1; color:#F4F8FF; }}
 .lb-bar-wrap {{ flex:2; height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }}
 .lb-bar {{ height:3px; border-radius:2px; }}
 .lb-pts {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; min-width:60px; text-align:right; }}
