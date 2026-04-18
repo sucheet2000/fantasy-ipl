@@ -140,7 +140,15 @@ st.markdown("""
 .stadium-bg svg { width: 100%; height: 100%; }
 
 .scroll-overlay {
-    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg,
+        rgba(4,8,26,0.18) 0%,
+        rgba(4,8,26,0.40) 42%,
+        rgba(4,8,26,0.82) 78%,
+        rgba(4,8,26,0.94) 100%);
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* ── Typography ── */
@@ -308,18 +316,18 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 
 /* ── Leaderboard rows ── */
 .lb-row {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 18px; border-radius: 14px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 12px; margin-bottom: 5px;
     background: linear-gradient(135deg, rgba(6,10,36,0.95), rgba(6,10,34,0.82));
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.06);
     position: relative; overflow: hidden;
     transition: all 0.2s ease;
 }
 .lb-row:hover {
-    background: linear-gradient(135deg, rgba(12,20,56,0.92), rgba(8,14,44,0.96));
-    border-color: rgba(255,255,255,0.18);
-    transform: translateX(4px);
+    background: linear-gradient(135deg, rgba(12,20,56,0.88), rgba(8,14,44,0.94));
+    border-color: rgba(255,255,255,0.12);
+    transform: translateX(3px);
 }
 /* left accent bar */
 .lb-row::before {
@@ -330,19 +338,19 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 }
 .lb-rank   {
     font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 800; color: #8898CC !important;
-    width: 28px; text-align: center; flex-shrink: 0;
+    font-size: 11px; font-weight: 600; color: #6880AA !important;
+    width: 20px; text-align: center; flex-shrink: 0;
 }
 .lb-avatar {
-    width: 42px; height: 42px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Sora', sans-serif;
-    font-size: 13px; font-weight: 700; flex-shrink: 0;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
 }
-.lb-name   { font-size: 16px; font-weight: 600; color: #E8F0FF !important; flex: 1; }
-.lb-bar-wrap { flex: 2; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
-.lb-bar    { height: 5px; border-radius: 3px; }
-.lb-pts    { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 800; min-width: 80px; text-align: right; }
+.lb-name   { font-size: 13px; font-weight: 500; color: #D0DCEE !important; flex: 1; }
+.lb-bar-wrap { flex: 2; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.lb-bar    { height: 3px; border-radius: 2px; }
+.lb-pts    { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; min-width: 70px; text-align: right; }
 
 /* ── Match day cards ── */
 .mgr-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1rem; }
@@ -868,8 +876,8 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
 .lb-row:hover {{ background:linear-gradient(135deg,rgba(12,20,56,0.88),rgba(8,14,44,0.92)); border-color:rgba(255,255,255,0.12); transform:translateX(3px); }}
 .lb-row::before {{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; border-radius:1px; background:var(--accent,#4A90D9); opacity:0.6; }}
 .lb-rank {{ font-family:'Sora',sans-serif; font-size:11px; font-weight:600; color:#A0B0D0; width:20px; text-align:center; flex-shrink:0; }}
-.lb-av {{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:13px; font-weight:700; flex-shrink:0; border:2px solid; }}
-.lb-name {{ font-size:16px; font-weight:600; flex:1; color:#F4F8FF; }}
+.lb-av {{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-size:10px; font-weight:700; flex-shrink:0; border:1px solid; }}
+.lb-name {{ font-size:13px; font-weight:500; flex:1; color:#F4F8FF; font-weight:600; }}
 .lb-bar-wrap {{ flex:2; height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }}
 .lb-bar {{ height:3px; border-radius:2px; }}
 .lb-pts {{ font-family:'Sora',sans-serif; font-size:13px; font-weight:700; min-width:60px; text-align:right; }}
@@ -925,37 +933,86 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
     <div class="sec-row"><span class="sec-label">All managers</span><div class="sec-line"></div></div>
     {lb_html}
 
-    <div class="sec-row" style="margin-top:1.4rem"><span class="sec-label">Position tracker</span><div class="sec-line"></div></div>
-    <div style="background:rgba(6,11,42,0.85);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;margin-bottom:8px">
-      <canvas id="rankChart" height="320"></canvas>
+    <div class="sec-row" style="margin-top:1.8rem"><span class="sec-label">Position tracker</span><div class="sec-line"></div></div>
+    <div style="background:rgba(6,11,42,0.92);border:1px solid rgba(255,255,255,0.10);border-radius:18px;padding:24px 20px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:stretch;gap:12px">
+        <!-- Left: rank labels column -->
+        <div id="rankLabelsCol" style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0 32px;flex-shrink:0;width:36px"></div>
+        <!-- Chart canvas -->
+        <div style="flex:1;min-width:0;position:relative">
+          <canvas id="rankChart" style="width:100%;height:520px;display:block"></canvas>
+        </div>
+        <!-- Right: current-rank avatar column -->
+        <div id="rankAvatarCol" style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0 32px;flex-shrink:0;width:48px"></div>
+      </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script>
     (function(){{
       var d = {rank_chart_json};
       var n = d.managers.length;
+
+      function initials(name) {{
+        var p = name.trim().split(' ');
+        return p.length > 1 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : name.slice(0,2).toUpperCase();
+      }}
+
+      /* Build avatar circles for current rank on right side */
+      var lastRanks = {{}};
+      d.managers.forEach(function(mgr, i) {{
+        var ranks = d.ranks[mgr];
+        if (ranks && ranks.length > 0) lastRanks[ranks[ranks.length-1]] = {{ mgr: mgr, col: d.colors[i % d.colors.length] }};
+      }});
+
+      var avatarCol = document.getElementById('rankAvatarCol');
+      var labelCol  = document.getElementById('rankLabelsCol');
+      if (avatarCol && labelCol) {{
+        for (var r = 1; r <= n; r++) {{
+          /* rank label */
+          var lbl = document.createElement('div');
+          lbl.style.cssText = 'font-size:13px;font-weight:700;color:#8898C8;text-align:right;line-height:1;padding-right:4px';
+          lbl.textContent = '#' + r;
+          labelCol.appendChild(lbl);
+
+          /* avatar */
+          var av = document.createElement('div');
+          var info = lastRanks[r];
+          var col = info ? info.col : '#8898C8';
+          var txt = info ? initials(info.mgr) : '';
+          av.style.cssText = 'width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:sans-serif;border:2px solid ' + col + ';background:' + col + '22;color:' + col + ';flex-shrink:0;';
+          av.textContent = txt;
+          if (info) av.title = info.mgr + ' — #' + r;
+          avatarCol.appendChild(av);
+        }}
+      }}
+
       var datasets = d.managers.map(function(mgr, i) {{
+        var col = d.colors[i % d.colors.length];
         return {{
           label: mgr,
           data: d.ranks[mgr],
-          borderColor: d.colors[i % d.colors.length],
+          borderColor: col,
           backgroundColor: 'transparent',
-          borderWidth: 2.5,
-          pointBackgroundColor: d.colors[i % d.colors.length],
-          pointRadius: 4,
-          pointHoverRadius: 7,
+          borderWidth: 3,
+          pointBackgroundColor: col,
+          pointBorderColor: 'rgba(6,11,42,0.9)',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 9,
           tension: 0.35,
         }};
       }});
+
       var ctx = document.getElementById('rankChart');
       if (!ctx) return;
       new Chart(ctx, {{
         type: 'line',
         data: {{ labels: d.labels, datasets: datasets }},
         options: {{
-          responsive: true,
+          responsive: false,
           maintainAspectRatio: false,
-          animation: {{ duration: 600 }},
+          animation: {{ duration: 800, easing: 'easeInOutQuart' }},
+          layout: {{ padding: {{ top: 8, bottom: 8 }} }},
           scales: {{
             y: {{
               reverse: true,
@@ -963,48 +1020,70 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
               max: n,
               ticks: {{
                 stepSize: 1,
-                color: '#8898C8',
-                font: {{ size: 11 }},
-                callback: function(v) {{ return '#' + v; }}
+                color: 'transparent',
+                font: {{ size: 12 }},
               }},
-              grid: {{ color: 'rgba(255,255,255,0.05)' }},
-              border: {{ color: 'rgba(255,255,255,0.1)' }},
+              grid: {{ color: 'rgba(255,255,255,0.06)', lineWidth: 1 }},
+              border: {{ color: 'rgba(255,255,255,0.12)', dash: [4,4] }},
             }},
             x: {{
-              ticks: {{ color: '#8898C8', font: {{ size: 10 }}, maxRotation: 45 }},
+              ticks: {{ color: '#8898C8', font: {{ size: 11, weight: '600' }}, maxRotation: 0 }},
               grid: {{ color: 'rgba(255,255,255,0.04)' }},
-              border: {{ color: 'rgba(255,255,255,0.1)' }},
+              border: {{ color: 'rgba(255,255,255,0.12)' }},
             }}
           }},
           plugins: {{
             legend: {{
-              position: 'bottom',
-              labels: {{
-                color: '#C8D4F0',
-                font: {{ size: 11 }},
-                boxWidth: 14,
-                boxHeight: 3,
-                padding: 10,
-                usePointStyle: true,
-                pointStyle: 'line',
-              }}
+              display: false,
             }},
             tooltip: {{
-              backgroundColor: 'rgba(6,11,42,0.95)',
-              borderColor: 'rgba(255,255,255,0.12)',
+              backgroundColor: 'rgba(4,8,30,0.97)',
+              borderColor: 'rgba(255,255,255,0.15)',
               borderWidth: 1,
-              titleColor: '#C8D4F0',
+              titleColor: '#E8F0FF',
               bodyColor: '#8898C8',
-              padding: 10,
+              padding: 12,
+              titleFont: {{ size: 13, weight: '700' }},
+              bodyFont: {{ size: 12 }},
               callbacks: {{
+                title: function(items) {{
+                  return items[0].label;
+                }},
                 label: function(ctx) {{
-                  return ' ' + ctx.dataset.label + ': #' + ctx.parsed.y;
+                  return '  ' + ctx.dataset.label + ':  #' + ctx.parsed.y;
+                }},
+                labelColor: function(ctx) {{
+                  return {{ borderColor: ctx.dataset.borderColor, backgroundColor: ctx.dataset.borderColor }};
                 }}
               }}
             }}
           }}
         }}
       }});
+
+      /* Draw a custom legend below — colour dot + name, sorted by current rank */
+      var legendWrap = document.createElement('div');
+      legendWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:16px;padding:0 4px';
+      var sorted = d.managers.slice().sort(function(a,b) {{
+        var ra = d.ranks[a]; var rb = d.ranks[b];
+        var la = ra && ra.length ? ra[ra.length-1] : 999;
+        var lb2 = rb && rb.length ? rb[rb.length-1] : 999;
+        return la - lb2;
+      }});
+      sorted.forEach(function(mgr) {{
+        var i = d.managers.indexOf(mgr);
+        var col = d.colors[i % d.colors.length];
+        var ranks = d.ranks[mgr];
+        var curRank = ranks && ranks.length ? ranks[ranks.length-1] : '?';
+        var item = document.createElement('div');
+        item.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;font-family:sans-serif';
+        item.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:'+col+'22;border:2px solid '+col+';color:'+col+';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">'+initials(mgr)+'</div>'
+          + '<span style="color:#C8D4F0;font-weight:600">'+mgr+'</span>'
+          + '<span style="color:#4A5A8A;font-size:10px">#'+curRank+'</span>';
+        legendWrap.appendChild(item);
+      }});
+      ctx.parentElement.parentElement.appendChild(legendWrap);
+
     }})();
     </script>
   </div>
