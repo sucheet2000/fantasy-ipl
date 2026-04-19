@@ -140,15 +140,7 @@ st.markdown("""
 .stadium-bg svg { width: 100%; height: 100%; }
 
 .scroll-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(180deg,
-        rgba(4,8,26,0.18) 0%,
-        rgba(4,8,26,0.40) 42%,
-        rgba(4,8,26,0.82) 78%,
-        rgba(4,8,26,0.94) 100%);
-    z-index: 1;
-    pointer-events: none;
+    display: none;
 }
 
 /* ── Typography ── */
@@ -934,17 +926,15 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
     {lb_html}
 
     <div class="sec-row" style="margin-top:1.8rem"><span class="sec-label">Position tracker</span><div class="sec-line"></div></div>
-    <div style="background:rgba(6,11,42,0.92);border:1px solid rgba(255,255,255,0.10);border-radius:18px;padding:24px 20px 16px;margin-bottom:8px">
-      <div style="display:flex;align-items:stretch;gap:12px">
-        <!-- Left: rank labels column -->
-        <div id="rankLabelsCol" style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0 32px;flex-shrink:0;width:36px"></div>
-        <!-- Chart canvas -->
-        <div style="flex:1;min-width:0;position:relative">
-          <canvas id="rankChart" style="width:100%;height:520px;display:block"></canvas>
+    <div style="background:rgba(6,11,42,0.92);border:1px solid rgba(255,255,255,0.10);border-radius:18px;padding:20px 16px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:stretch;gap:8px">
+        <div id="rankLabelsCol" style="display:flex;flex-direction:column;justify-content:space-between;padding:6px 0 28px;flex-shrink:0;width:32px;text-align:right"></div>
+        <div style="flex:1;min-width:0;position:relative;height:540px">
+          <canvas id="rankChart" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
         </div>
-        <!-- Right: current-rank avatar column -->
-        <div id="rankAvatarCol" style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0 32px;flex-shrink:0;width:48px"></div>
+        <div id="rankAvatarCol" style="display:flex;flex-direction:column;justify-content:space-between;padding:6px 0 28px;flex-shrink:0;width:46px"></div>
       </div>
+      <div id="rankLegend" style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:16px;padding:0 4px"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script>
@@ -956,36 +946,46 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
         var p = name.trim().split(' ');
         return p.length > 1 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : name.slice(0,2).toUpperCase();
       }}
+      function makeAv(txt, col, size) {{
+        var av = document.createElement('div');
+        av.style.cssText = 'width:'+size+'px;height:'+size+'px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:'+(size*0.28)+'px;font-weight:700;font-family:sans-serif;border:2px solid '+col+';background:'+col+'22;color:'+col+';flex-shrink:0';
+        av.textContent = txt;
+        return av;
+      }}
 
-      /* Build avatar circles for current rank on right side */
-      var lastRanks = {{}};
+      /* Figure out current rank for each manager */
+      var lastRankOf = {{}};
+      d.managers.forEach(function(mgr) {{
+        var r = d.ranks[mgr];
+        lastRankOf[mgr] = r && r.length ? r[r.length-1] : 999;
+      }});
+      /* Build rank->manager map */
+      var mgrAtRank = {{}};
       d.managers.forEach(function(mgr, i) {{
-        var ranks = d.ranks[mgr];
-        if (ranks && ranks.length > 0) lastRanks[ranks[ranks.length-1]] = {{ mgr: mgr, col: d.colors[i % d.colors.length] }};
+        var r = lastRankOf[mgr];
+        mgrAtRank[r] = {{ mgr: mgr, col: d.colors[i % d.colors.length] }};
       }});
 
-      var avatarCol = document.getElementById('rankAvatarCol');
+      /* Populate left rank labels and right avatar column */
       var labelCol  = document.getElementById('rankLabelsCol');
-      if (avatarCol && labelCol) {{
+      var avatarCol = document.getElementById('rankAvatarCol');
+      if (labelCol && avatarCol) {{
         for (var r = 1; r <= n; r++) {{
-          /* rank label */
           var lbl = document.createElement('div');
-          lbl.style.cssText = 'font-size:13px;font-weight:700;color:#8898C8;text-align:right;line-height:1;padding-right:4px';
-          lbl.textContent = '#' + r;
+          lbl.style.cssText = 'font-size:13px;font-weight:700;color:#6880AA;line-height:1;padding-right:2px';
+          lbl.textContent = '#'+r;
           labelCol.appendChild(lbl);
 
-          /* avatar */
-          var av = document.createElement('div');
-          var info = lastRanks[r];
-          var col = info ? info.col : '#8898C8';
-          var txt = info ? initials(info.mgr) : '';
-          av.style.cssText = 'width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:sans-serif;border:2px solid ' + col + ';background:' + col + '22;color:' + col + ';flex-shrink:0;';
-          av.textContent = txt;
-          if (info) av.title = info.mgr + ' — #' + r;
+          var info = mgrAtRank[r];
+          var col2 = info ? info.col : '#334466';
+          var txt2 = info ? initials(info.mgr) : '';
+          var av = makeAv(txt2, col2, 42);
+          if (info) av.title = info.mgr + ' — currently #'+r;
           avatarCol.appendChild(av);
         }}
       }}
 
+      /* Chart datasets */
       var datasets = d.managers.map(function(mgr, i) {{
         var col = d.colors[i % d.colors.length];
         return {{
@@ -995,7 +995,7 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
           backgroundColor: 'transparent',
           borderWidth: 3,
           pointBackgroundColor: col,
-          pointBorderColor: 'rgba(6,11,42,0.9)',
+          pointBorderColor: 'rgba(4,8,26,0.85)',
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 9,
@@ -1003,16 +1003,16 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
         }};
       }});
 
-      var ctx = document.getElementById('rankChart');
-      if (!ctx) return;
-      new Chart(ctx, {{
+      var canvas = document.getElementById('rankChart');
+      if (!canvas) return;
+      new Chart(canvas, {{
         type: 'line',
         data: {{ labels: d.labels, datasets: datasets }},
         options: {{
-          responsive: false,
+          responsive: true,
           maintainAspectRatio: false,
-          animation: {{ duration: 800, easing: 'easeInOutQuart' }},
-          layout: {{ padding: {{ top: 8, bottom: 8 }} }},
+          animation: {{ duration: 700 }},
+          layout: {{ padding: {{ top: 4, right: 4 }} }},
           scales: {{
             y: {{
               reverse: true,
@@ -1020,22 +1020,19 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
               max: n,
               ticks: {{
                 stepSize: 1,
-                color: 'transparent',
-                font: {{ size: 12 }},
+                color: 'rgba(0,0,0,0)',
               }},
-              grid: {{ color: 'rgba(255,255,255,0.06)', lineWidth: 1 }},
-              border: {{ color: 'rgba(255,255,255,0.12)', dash: [4,4] }},
+              grid: {{ color: 'rgba(255,255,255,0.06)' }},
+              border: {{ dash: [3,3], color: 'rgba(255,255,255,0.1)' }},
             }},
             x: {{
-              ticks: {{ color: '#8898C8', font: {{ size: 11, weight: '600' }}, maxRotation: 0 }},
+              ticks: {{ color: '#8898C8', font: {{ size: 11, weight:'600' }}, maxRotation: 0 }},
               grid: {{ color: 'rgba(255,255,255,0.04)' }},
               border: {{ color: 'rgba(255,255,255,0.12)' }},
             }}
           }},
           plugins: {{
-            legend: {{
-              display: false,
-            }},
+            legend: {{ display: false }},
             tooltip: {{
               backgroundColor: 'rgba(4,8,30,0.97)',
               borderColor: 'rgba(255,255,255,0.15)',
@@ -1043,47 +1040,36 @@ html, body {{ background:transparent !important; font-family:'DM Sans',system-ui
               titleColor: '#E8F0FF',
               bodyColor: '#8898C8',
               padding: 12,
-              titleFont: {{ size: 13, weight: '700' }},
-              bodyFont: {{ size: 12 }},
               callbacks: {{
-                title: function(items) {{
-                  return items[0].label;
-                }},
-                label: function(ctx) {{
-                  return '  ' + ctx.dataset.label + ':  #' + ctx.parsed.y;
-                }},
-                labelColor: function(ctx) {{
-                  return {{ borderColor: ctx.dataset.borderColor, backgroundColor: ctx.dataset.borderColor }};
-                }}
+                title: function(items) {{ return items[0].label; }},
+                label: function(ctx) {{ return '  '+ctx.dataset.label+':  #'+ctx.parsed.y; }},
+                labelColor: function(ctx) {{ return {{ borderColor: ctx.dataset.borderColor, backgroundColor: ctx.dataset.borderColor }}; }}
               }}
             }}
           }}
         }}
       }});
 
-      /* Draw a custom legend below — colour dot + name, sorted by current rank */
-      var legendWrap = document.createElement('div');
-      legendWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:16px;padding:0 4px';
-      var sorted = d.managers.slice().sort(function(a,b) {{
-        var ra = d.ranks[a]; var rb = d.ranks[b];
-        var la = ra && ra.length ? ra[ra.length-1] : 999;
-        var lb2 = rb && rb.length ? rb[rb.length-1] : 999;
-        return la - lb2;
-      }});
-      sorted.forEach(function(mgr) {{
-        var i = d.managers.indexOf(mgr);
-        var col = d.colors[i % d.colors.length];
-        var ranks = d.ranks[mgr];
-        var curRank = ranks && ranks.length ? ranks[ranks.length-1] : '?';
-        var item = document.createElement('div');
-        item.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;font-family:sans-serif';
-        item.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:'+col+'22;border:2px solid '+col+';color:'+col+';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">'+initials(mgr)+'</div>'
-          + '<span style="color:#C8D4F0;font-weight:600">'+mgr+'</span>'
-          + '<span style="color:#4A5A8A;font-size:10px">#'+curRank+'</span>';
-        legendWrap.appendChild(item);
-      }});
-      ctx.parentElement.parentElement.appendChild(legendWrap);
-
+      /* Legend sorted by current rank */
+      var legendEl = document.getElementById('rankLegend');
+      if (legendEl) {{
+        var sorted = d.managers.slice().sort(function(a,b){{ return lastRankOf[a]-lastRankOf[b]; }});
+        sorted.forEach(function(mgr) {{
+          var i   = d.managers.indexOf(mgr);
+          var col = d.colors[i % d.colors.length];
+          var item = document.createElement('div');
+          item.style.cssText = 'display:flex;align-items:center;gap:6px';
+          var av = makeAv(initials(mgr), col, 30);
+          var nm = document.createElement('span');
+          nm.style.cssText = 'font-size:12px;font-weight:600;color:#C8D4F0;font-family:sans-serif';
+          nm.textContent = mgr;
+          var rk = document.createElement('span');
+          rk.style.cssText = 'font-size:10px;color:#4A5A8A;font-family:sans-serif';
+          rk.textContent = ' #'+lastRankOf[mgr];
+          item.appendChild(av); item.appendChild(nm); item.appendChild(rk);
+          legendEl.appendChild(item);
+        }});
+      }}
     }})();
     </script>
   </div>
