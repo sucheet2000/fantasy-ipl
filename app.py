@@ -87,6 +87,7 @@ MATCH_LABELS = {
     'Match47': 'M47: MI vs LSG',
     'Match48': 'M48: CSK vs DC',
     'Match49': 'M49: SRH vs PBKS',
+    'Match50': 'M50: LSG vs RCB',
     'Match40': 'M40: RR vs PBKS',
     'Match41': 'M41: SRH vs MI',
     'Match42': 'M42: GT vs RCB',
@@ -97,6 +98,7 @@ MATCH_LABELS = {
     'Match47': 'M47: MI vs LSG',
     'Match48': 'M48: CSK vs DC',
     'Match49': 'M49: SRH vs PBKS',
+    'Match50': 'M50: LSG vs RCB',
 }
 
 BAR_COLORS = [
